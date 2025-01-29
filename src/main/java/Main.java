@@ -16,7 +16,7 @@ public class Main
             // Since the tester restarts your program quite often, setting SO_REUSEADDR
             // ensures that we don't run into 'Address already in use' errors
             serverSocket.setReuseAddress(true);
-            serverSocket.accept(); // Wait for connection from client.
+            clientSocket = serverSocket.accept(); // Wait for connection from client.
             // HTTP/1.1 200 OK\r\n\r\n
             clientSocket.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
             System.out.println("accepted new connection");
