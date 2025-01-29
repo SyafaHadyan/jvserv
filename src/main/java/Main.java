@@ -1,4 +1,7 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -17,11 +20,23 @@ public class Main
             // ensures that we don't run into 'Address already in use' errors
             serverSocket.setReuseAddress(true);
             clientSocket = serverSocket.accept(); // Wait for connection from client.
-            // HTTP/1.1 200 OK\r\n\r\n
-            clientSocket.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
-            System.out.println("accepted new connection");
-            serverSocket.close();
+            InputStream inputStream = clientSocket.getInputStream();
+            BufferedReader input = new BufferedReader(new InputStreamReader(inputStream));
+            String request = input.readLine();
+            System.out.println("Accepted new connection");
+            System.out.println(request);
+            if (request.split(" ")[1].equals("/")) // GET /asdf HTTP/1.1
+            {
+                clientSocket.getOutputStream().write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
+                System.out.println("Response OK");
+            }
+            else // GET / HTTP/1.1
+            {
+                clientSocket.getOutputStream().write("HTTP/1.1 404 Not Found\r\n\r\n".getBytes());
+                System.out.println("Not Found");
+            }
             clientSocket.close();
+            serverSocket.close();
         }
         catch (IOException e)
         {
